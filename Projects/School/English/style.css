@@ -16,13 +16,255 @@ body {
 	background: #f1c40f;
 }
 
+
 .flipbook {
     width: 1000px;
     height: 600px;
 }
 
+/* THE PAGES */
+.accept {
+    background-image: url('images/Accept.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.except {
+    background-image: url('images/Except.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.all-ready {
+    background-image: url('images/All-Ready.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.already {
+    background-image: url('images/Already.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.beside {
+    background-image: url('images/Beside.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.besides {
+    background-image: url('images/Besides.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.principal {
+    background-image: url('images/Principal.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.principle {
+    background-image: url('images/Principle.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.into {
+    background-image: url('images/Into.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.in-to {
+    background-image: url('images/In-to.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.advice {
+    background-image: url('images/Advice.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.advise {
+    background-image: url('images/Advise.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.bare {
+    background-image: url('images/Bare.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.bear {
+    background-image: url('images/Bear.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.brake {
+    background-image: url('images/Brake.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.break {
+    background-image: url('images/Break.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cord {
+    background-image: url('images/Cord.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.chord {
+    background-image: url('images/Chord.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.coarse {
+    background-image: url('images/Coarse.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.course {
+    background-image: url('images/Course.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.desert {
+    background-image: url('images/Desert.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.dessert {
+    background-image: url('images/Dessert.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.duel {
+    background-image: url('images/Duel.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.dual {
+    background-image: url('images/Dual.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.fawn {
+    background-image: url('images/Fawn.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.faun {
+    background-image: url('images/Faun.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.lose {
+    background-image: url('images/Lose.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.loose {
+    background-image: url('images/Loose.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.site {
+    background-image: url('images/Site.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.sight {
+    background-image: url('images/Sight.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+/* Test */
+#reviewWords {
+    background-color: black;
+    color: white;
+}
+.test {
+    background-image: url('images/test/test.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.slide1 {
+    background-image: url('images/test/slide1.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.slide2 {
+    background-image: url('images/test/slide2.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.slide3 {
+    background-image: url('images/test/slide3.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.answer1 {
+    background-image: url('images/test/answer1.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.answer2 {
+    background-image: url('images/test/answer2.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.answer3 {
+    background-image: url('images/test/answer3.png') !important;
+    background-size: 100% 100% !important;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+
+
+
+#mainCover {
+    background: black;
+    background-image: url('images/Usage.png') !important;
+    background-size: 100% 100% !important;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+}
 .flipbook .hard {
-    background: #c0392b !important;
+    background: black !important;
     color: #fff;
     font-weight: bold;
     border: none; 
