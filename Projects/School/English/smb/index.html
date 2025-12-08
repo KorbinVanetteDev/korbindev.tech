@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Map</title>
+    <style>
+        :root {
+            --bg: #0b0d12;
+            --bg-2: #0f1320;
+            --text: #e8ecf5;
+            --accent: #7a8bff;
+            --card: rgba(255,255,255,0.06);
+            --glow: rgba(122,139,255,0.35);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #11162c 0%, #090b11 40%, #05070d 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+        .shell { width: min(1200px, 100%); position: relative; }
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--bg), var(--bg-2));
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .title {
+            margin: 0 0 12px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 40%, var(--glow), transparent 55%);
+            filter: blur(40px);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        .canvas {
+            position: relative;
+            z-index: 1;
+            perspective: 900px;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+        .hero-img {
+            width: min(100%, 1080px);
+            transition: transform 0.4s ease, filter 0.4s ease;
+            filter: drop-shadow(0 12px 30px rgba(0,0,0,0.5)) drop-shadow(0 0 25px rgba(122,139,255,0.4));
+            transform-style: preserve-3d;
+            display: block;
+        }
+        .hotspots { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .hotspot {
+            --size: 18px;
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 10px rgba(122,139,255,0.18), 0 8px 18px rgba(0,0,0,0.35);
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+            box-shadow: 0 0 0 12px rgba(122,139,255,0.25), 0 12px 26px rgba(0,0,0,0.45);
+        }
+        .info-card {
+            position: absolute;
+            min-width: 220px;
+            max-width: 280px;
+            background: rgba(12,14,22,0.9);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-shadow: 0 18px 38px rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, calc(-100% - 12px));
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(6px);
+            z-index: 3;
+        }
+        .info-card.visible { opacity: 1; pointer-events: auto; }
+        .info-card h4 { margin: 0 0 6px; font-size: 15px; }
+        .info-card p { margin: 0; font-size: 13px; line-height: 1.4; color: #c7d0e6; }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <div class="hero">
+        <center><h1 class="title">Custom Map</h1></center>
+        <div class="glow"></div>
+        <div class="canvas" id="canvas">
+            <img id="hero-img" class="hero-img" src="map.png" alt="3D track render" />
+            <div class="hotspots" aria-label="hotspots over track">
+                <!-- Bottom run (3) -->
+                <div class="hotspot" data-id="1" style="--x: 43%; --y: 60%;"></div>
+                <div class="hotspot" data-id="2" style="--x: 58%; --y: 50%;"></div>
+                <div class="hotspot" data-id="3" style="--x: 69%; --y: 49%;"></div>
+                <!-- Top run (2) -->
+                <div class="hotspot" data-id="4" style="--x: 29%; --y: 45%;"></div>
+                <div class="hotspot" data-id="5" style="--x: 43%; --y: 40%;"></div>
+            </div>
+            <div id="card-1" class="info-card"><h4>My House</h4><p>This is my home I have grown up in.</p></div>
+            <div id="card-2" class="info-card"><h4>My Aunts House</h4><p>My Cousins, Aunt, and Uncle live here.</p></div>
+            <div id="card-3" class="info-card"><h4>My Grandparents House</h4><p>My Grandmother and Grandfather live here.</p></div>
+            <div id="card-4" class="info-card"><h4>Neighbor 1</h4><p>My neighbor who likes the same stuff as me.</p></div>
+            <div id="card-5" class="info-card"><h4>Neighbor 2</h4><p>I grew up playing with their son.</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const hero = document.getElementById('hero-img');
+    const canvas = document.getElementById('canvas');
+    const hotspots = Array.from(document.querySelectorAll('.hotspot'));
+    const cards = {
+        1: document.getElementById('card-1'),
+        2: document.getElementById('card-2'),
+        3: document.getElementById('card-3'),
+        4: document.getElementById('card-4'),
+        5: document.getElementById('card-5'),
+    };
+
+    // Parallax tilt
+    canvas.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const maxTilt = 8;
+        hero.style.transform = `rotateX(${(-y * maxTilt).toFixed(2)}deg) rotateY(${(x * maxTilt).toFixed(2)}deg) translateZ(10px)`;
+    });
+    canvas.addEventListener('pointerleave', () => {
+        hero.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+
+    // Hotspot interactions
+    function hideAllCards() {
+        Object.values(cards).forEach(card => card.classList.remove('visible'));
+    }
+    hotspots.forEach(hs => {
+        hs.addEventListener('click', (e) => {
+            const id = hs.dataset.id;
+            const rect = hs.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            const card = cards[id];
+            hideAllCards();
+            card.style.left = `${((rect.left + rect.width / 2) - canvasRect.left)}px`;
+            card.style.top = `${((rect.top + rect.height / 2) - canvasRect.top)}px`;
+            card.classList.add('visible');
+            e.stopPropagation();
+        });
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('hotspot') && !e.target.closest('.info-card')) hideAllCards();
+    });
+</script>
+</body>
+</html>
