@@ -1,20 +1,291 @@
-<!--
-UPDATED LAUNCHER
-- Full-screen lock screen (no extra branding/laptop frame)
-- Swipe up / press Enter to reveal ONLY the password prompt
-- Password is shown on the unlock screen (as requested)
-- After unlock, shows a Windows-like desktop with an icon to open index.html
--->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lock Screen — Nocturne Training</title>
-  <link rel="stylesheet" href="launcher.css" />
+  <title>NocturneOS — Launcher</title>
+  <style>
+    :root{
+      --ink:#eefdf6;
+      --muted:rgba(238,253,246,0.82);
+      --accent:#44ff99;
+      --danger:#ff5a7a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+
+      --vh: 1vh; /* JS will overwrite */
+    }
+
+    *{ box-sizing:border-box; }
+
+    html, body{
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      background:#050807;
+    }
+
+    body{
+      font-family:var(--sans);
+      color:var(--ink);
+    }
+
+    /* Full-screen sections */
+    .lock, .unlock, .desktop{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height: calc(var(--vh) * 100);
+      overflow:hidden;
+    }
+    @supports (height: 100dvh){
+      .lock, .unlock, .desktop{ height: 100dvh; }
+    }
+
+    .hidden{ display:none; }
+
+    /* Wallpaper / background */
+    .lock__wall, .unlock__wall, .desktop__wall{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      background:
+        radial-gradient(1100px 700px at 20% 15%, rgba(68,255,153,0.14), transparent 60%),
+        radial-gradient(1000px 680px at 85% 25%, rgba(32,214,255,0.14), transparent 62%),
+        linear-gradient(180deg, #07110d, #050807);
+      transform: scale(1.05);
+      filter: saturate(1.05);
+    }
+    .unlock__wall{
+      filter: blur(10px) saturate(1.05);
+      transform: scale(1.10);
+    }
+
+    /* LOCK SCREEN */
+    .lock__top{
+      position:relative;
+      padding: clamp(28px, 7vh, 72px) clamp(18px, 6vw, 70px);
+      user-select:none;
+    }
+    .lock__time{
+      font-weight:600;
+      font-size: clamp(56px, 9.5vw, 92px);
+      letter-spacing:-0.02em;
+      text-shadow: 0 18px 55px rgba(0,0,0,0.45);
+    }
+    .lock__date{
+      margin-top:10px;
+      font-size: clamp(14px, 2.2vw, 20px);
+      color:var(--muted);
+      text-shadow: 0 18px 55px rgba(0,0,0,0.35);
+    }
+
+    /* Chevrons only (no text) */
+    .lock__swipe{
+      position:absolute;
+      left:50%;
+      bottom: clamp(18px, 3vh, 26px);
+      transform:translateX(-50%);
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      opacity:0.45;
+      user-select:none;
+      pointer-events:none;
+    }
+    .lock__chev{
+      font-size:18px;
+      line-height:1;
+      text-align:center;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.55));
+    }
+
+    /* Whole-screen drag target */
+    .dragLayer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      touch-action: pan-y;
+    }
+
+    /* UNLOCK SCREEN */
+    .unlock__center{
+      position:absolute;
+      left:50%;
+      top:44%;
+      transform:translate(-50%,-50%);
+      width:min(420px, 86vw);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      padding: 0 16px;
+    }
+
+    .user{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .user__avatar{
+      width:92px; height:92px;
+      border-radius:50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      border:1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.55);
+    }
+    .user__name{
+      font-size:18px;
+      font-weight:600;
+      text-shadow: 0 18px 55px rgba(0,0,0,0.45);
+    }
+
+    /* Password shown (per request) */
+    .pwShown{
+      font-family:var(--mono);
+      font-size:13px;
+      background: rgba(0,0,0,0.25);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:14px;
+      padding:10px 12px;
+      color: rgba(238,253,246,0.92);
+    }
+    .pwShown__value{
+      color: var(--accent);
+      font-weight:800;
+    }
+
+    .field{ width:100%; }
+    .field__input{
+      width:100%;
+      border-radius:6px;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.22);
+      color:var(--ink);
+      font-size:15px;
+      outline:none;
+    }
+    .field__input:focus{
+      border-color: rgba(255,255,255,0.35);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+    }
+
+    .btn{
+      width:100%;
+      border-radius:6px;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.10);
+      color:var(--ink);
+      font-weight:700;
+      cursor:pointer;
+    }
+    .btn--primary{ background: rgba(255,255,255,0.16); }
+    .btn:focus{ outline:2px solid rgba(255,255,255,0.28); outline-offset:2px; }
+
+    .msg{
+      min-height:18px;
+      font-family:var(--mono);
+      font-size:12px;
+      opacity:0.95;
+    }
+    .msg--bad{ color: var(--danger); }
+
+    .srOnly{
+      position:absolute !important;
+      width:1px; height:1px;
+      padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0);
+      white-space:nowrap; border:0;
+    }
+
+    /* DESKTOP */
+    .icons{
+      position:relative;
+      padding:26px;
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+    }
+    .icon{
+      width:92px;
+      background: transparent;
+      border:0;
+      color:rgba(238,253,246,0.92);
+      cursor:pointer;
+      text-align:center;
+    }
+    .icon:focus{ outline:2px solid rgba(255,255,255,0.22); outline-offset:4px; border-radius:10px; }
+
+    .icon__img{
+      width:64px;
+      height:64px;
+      margin:0 auto;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.18);
+      box-shadow: 0 18px 70px rgba(0,0,0,0.35);
+    }
+    .icon__img--hack{
+      background:
+        radial-gradient(22px 22px at 28% 30%, rgba(68,255,153,0.55), transparent 60%),
+        radial-gradient(26px 26px at 70% 62%, rgba(32,214,255,0.45), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+    }
+    .icon__label{
+      margin-top:8px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    /* Taskbar */
+    .taskbar{
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:54px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 12px;
+      background: rgba(0,0,0,0.32);
+      border-top:1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(8px);
+    }
+    .taskbar__left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: rgba(238,253,246,0.82);
+      font-weight:700;
+    }
+    .orb{
+      width:30px; height:30px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:
+        radial-gradient(18px 18px at 35% 35%, rgba(68,255,153,0.55), transparent 62%),
+        radial-gradient(18px 18px at 70% 65%, rgba(32,214,255,0.45), transparent 62%),
+        rgba(0,0,0,0.18);
+    }
+    .clock{
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(238,253,246,0.88);
+    }
+
+    @media (max-width: 560px){
+      .lock__top{ padding:64px 24px; }
+    }
+  </style>
 </head>
 <body>
-  <!-- LOCK SCREEN (full screen) -->
+  <!-- LOCK SCREEN -->
   <section id="lock" class="lock" aria-label="Lock screen">
     <div class="lock__wall" aria-hidden="true"></div>
 
@@ -29,11 +300,10 @@ UPDATED LAUNCHER
       <div class="lock__chev">⌃</div>
     </div>
 
-    <!-- Invisible drag target (whole screen) -->
     <div id="dragLayer" class="dragLayer" aria-hidden="true"></div>
   </section>
 
-  <!-- UNLOCK SCREEN (full screen, ONLY password prompt + shown password) -->
+  <!-- UNLOCK SCREEN -->
   <section id="unlock" class="unlock hidden" aria-label="Unlock screen">
     <div class="unlock__wall" aria-hidden="true"></div>
 
@@ -43,7 +313,6 @@ UPDATED LAUNCHER
         <div class="user__name">Trainee</div>
       </div>
 
-      <!-- As requested: show the password on this screen -->
       <div class="pwShown" aria-label="Training password">
         Password: <span class="pwShown__value" id="pwShownValue">trainee</span>
       </div>
@@ -59,7 +328,7 @@ UPDATED LAUNCHER
     </div>
   </section>
 
-  <!-- DESKTOP (full screen) -->
+  <!-- DESKTOP -->
   <section id="desktop" class="desktop hidden" aria-label="Desktop">
     <div class="desktop__wall" aria-hidden="true"></div>
 
@@ -82,19 +351,17 @@ UPDATED LAUNCHER
   </section>
 
   <script>
-
-      (function(){
-    function setVh(){
-      // accurate viewport height for mobile browser UI (address bar)
-      document.documentElement.style.setProperty("--vh", (window.innerHeight * 0.01) + "px");
-    }
-    setVh();
-    window.addEventListener("resize", setVh);
-
-    // ... keep the rest of your launcher script below ...
-  })();
-    
     (function(){
+      // --- Robust viewport height fix (mobile address-bar friendly) ---
+      function setVh(){
+        const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+        document.documentElement.style.setProperty("--vh", (h * 0.01) + "px");
+      }
+      setVh();
+      window.addEventListener("resize", setVh);
+      window.addEventListener("orientationchange", setVh);
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", setVh);
+
       const lock = document.getElementById("lock");
       const unlock = document.getElementById("unlock");
       const desktop = document.getElementById("desktop");
@@ -111,7 +378,7 @@ UPDATED LAUNCHER
 
       const TRAINING_PASSWORD = "trainee";
 
-      // US-friendly date/time using local device timezone
+      // US-friendly time/date, using the player's local device timezone
       function formatTimeUS(d){
         return new Intl.DateTimeFormat("en-US", {
           hour: "numeric",
@@ -190,6 +457,7 @@ UPDATED LAUNCHER
       unlockBtn.addEventListener("click", doUnlock);
 
       hackIcon.addEventListener("click", ()=>{
+        // Launch your existing game page
         window.location.href = "index.html";
       });
     })();
