@@ -1016,13 +1016,13 @@ function cmdHint() {
     if (trace >= 70 && GAME.unlocked.sanitize) {
       return {
         cmd: "sanitize logs",
-        why: "Your trace is high. In real investigations, logs + timestamps can correlate activity. In this fictional sim, sanitizing reduces trace pressure."
+        why: "Your trace is high. In real investigations, logs + timestamps can correlate activity. Sanitizing reduces trace pressure."
       };
     }
     if (trace >= 70 && GAME.unlocked.decoy) {
       return {
         cmd: "decoy packets",
-        why: "Your trace is high. Extra traffic patterns can change correlation signals. In this fictional sim, decoys reduce trace pressure."
+        why: "Your trace is high. Extra traffic patterns can change correlation signals. Decoys reduce trace pressure."
       };
     }
 
@@ -1030,7 +1030,7 @@ function cmdHint() {
     if (trace >= 40) {
       return {
         cmd: "rotate proxy",
-        why: "Trace builds from repeated actions (like scans). Rotating proxy (fictional) slows trace growth for a bit, giving you more room to explore calmly."
+        why: "Trace builds from repeated actions (like scans). Rotating proxy slows trace growth for a bit, giving you more room to explore calmly."
       };
     }
 
@@ -1038,7 +1038,7 @@ function cmdHint() {
     if (GAME.unlocked.sanitize) {
       return {
         cmd: "sanitize logs",
-        why: "Optional: using defensive tools teaches that forensics often relies on artifacts like logs and timestamps. In this sim, sanitizing lowers the trace meter."
+        why: "Optional: using defensive tools teaches that forensics often relies on artifacts like logs and timestamps. Sanitizing lowers the trace meter."
       };
     }
     if (GAME.unlocked.decoy) {
