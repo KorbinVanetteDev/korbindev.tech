@@ -322,7 +322,7 @@ Hint: decode b64 to get the 3 digits.`
   // -----------------------------
   const TRACE = {
     value: 8,
-    growthPerCommand: 2.4,
+    growthPerCommand: 7,
     slowUntil: 0, // timestamp ms
     checkpoint: 0, // stage index checkpoint
   };
@@ -1083,9 +1083,9 @@ Hint: decode b64 to get the 3 digits.`
 
     printHr();
     typeLines([
-      "Hack Away",
+      "Forensic Art Project",
       "Mode: Cyber Terminal",
-      "Safety: fake targets only • beginner-friendly",
+      "Safety: NONE WE ARE HACKING",
       "",
       "Your mission: discover the vault password through evidence.",
       "Type 'help' to see commands. Type 'hint' if you get stuck."
