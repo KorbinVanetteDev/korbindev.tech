@@ -195,7 +195,7 @@ Start here:
 Tip: Use 'help' for commands.
 Hint system: type 'hint' at any time.
 
-— Instructor M. Vale`
+— Instructor Mrs. Cox`
     },
 
     "/inbox/trainee_note.txt": {
