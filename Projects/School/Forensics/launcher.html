@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>NocturneOS — Launcher</title>
+  <title>CoxOS — Launcher</title>
   <style>
     :root{
       --ink:#eefdf6;
@@ -505,11 +505,11 @@
       <div class="center">
         <div class="user">
           <div class="avatar" aria-hidden="true"></div>
-          <div class="name">Trainee</div>
+          <div class="name">Student</div>
         </div>
 
         <div class="pwShown" aria-label="Training password">
-          Password: <b id="pwShownValue">trainee</b>
+          Password: <b id="pwShownValue">student</b>
         </div>
 
         <input id="pw" class="input" type="password" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Password" />
@@ -537,7 +537,7 @@
       <!-- Credits "Notepad" window -->
       <section id="creditsWin" class="window hidden" role="dialog" aria-modal="false" aria-label="Credits - Notepad">
         <div id="creditsBar" class="winBar" aria-label="Window title bar">
-          <div class="winTitle" id="creditsTitle">Credits.txt — Notepad</div>
+          <div class="winTitle" id="creditsTitle">Credits</div>
           <div class="winBtns">
             <button id="creditsMin" class="winBtn" type="button" aria-label="Minimize">—</button>
             <button id="creditsClose" class="winBtn" type="button" aria-label="Close">✕</button>
@@ -548,7 +548,7 @@
           <textarea id="creditsText" class="notepad" spellcheck="false"></textarea>
           <div class="saveRow">
             <button id="creditsReset" class="miniBtn" type="button">Reset</button>
-            <button id="creditsSave" class="miniBtn" type="button">Save</button>
+            <!--<button id="creditsSave" class="miniBtn" type="button">Save</button>-->
           </div>
         </div>
       </section>
@@ -602,7 +602,7 @@
       const creditsBar = document.getElementById("creditsBar");
       const toastEl = document.getElementById("toast");
 
-      const TRAINING_PASSWORD = "trainee";
+      const TRAINING_PASSWORD = "student";
 
       // US-friendly time/date, using the player's local device timezone
       function formatTimeUS(d){
@@ -687,14 +687,14 @@
 
       // ---- Credits "Notepad" ----
       const DEFAULT_CREDITS =
-`NOCTURNEOS — CREDITS (editable)
+`CoxOS — CREDITS (editable)
 --------------------------------
 
 Game/Concept:
-- You (the creator)
-- Nocturne Labs Training Sim (fictional)
+- Korbin and Dario
+- Cox Labs Training Sim
 
-Terminal Training Topics (safe & fictional):
+Terminal Training Topics:
 - OSINT basics (whois-style lookup)
 - Log reading (grep/cat)
 - Metadata inspection
@@ -702,11 +702,11 @@ Terminal Training Topics (safe & fictional):
 
 Audio/Visual:
 - Built-in WebAudio beeps (no external assets)
-- CSS-only UI styling (no frameworks)
+- CSS-only UI styling by Korbin (no frameworks)
 
 Notes:
-- Edit anything in this file.
-- Click Save to store your edits in this browser (localStorage).`;
+- For Forensic Art Project
+- Make sure to use the help command to start. Hints will guide you through the game.`;
 
       const STORAGE_KEY = "nocturneos.creditsText.v1";
 
