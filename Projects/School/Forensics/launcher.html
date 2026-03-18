@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>NocturneOS — Launcher</title>
+  <title>CoxOS — Launcher</title>
   <style>
     :root{
       --ink:#eefdf6;
@@ -356,11 +356,11 @@
       <div class="center">
         <div class="user">
           <div class="avatar" aria-hidden="true"></div>
-          <div class="name">Trainee</div>
+          <div class="name">Student</div>
         </div>
 
         <div class="pwShown" aria-label="Training password">
-          Password: <b id="pwShownValue">trainee</b>
+          Password: <b id="pwShownValue">student</b>
         </div>
 
         <input id="pw" class="input" type="password" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Password" />
@@ -383,7 +383,7 @@
       <footer class="taskbar" aria-label="Taskbar">
         <div class="taskLeft">
           <div class="orb" aria-hidden="true"></div>
-          <div>NocturneOS</div>
+          <div>CoxOS</div>
         </div>
         <div id="deskClock" class="clock">12:00 AM</div>
       </footer>
@@ -416,7 +416,7 @@
       const loginMsg = document.getElementById("loginMsg");
       const hackIcon = document.getElementById("hackIcon");
 
-      const TRAINING_PASSWORD = "trainee";
+      const TRAINING_PASSWORD = "student";
 
       // US-friendly time/date, using the player's local device timezone
       function formatTimeUS(d){
