@@ -951,20 +951,17 @@ function getRecommendedCommand() {
   return "help";
 }
   
-// CHANGE 2: In cmdHint(), replace your current "recommended" switch with this single line:
-//
-//   const recommended = getRecommendedCommand();
-//
-// Nothing else has to change in cmdHint().
+// CHANGE: Replace your cmdHint() with this version.
+// It keeps your "Recommended command" + Copy button,
+// and ADDs a "Defensive tip" line (with optional copy button) explaining WHY.
 
 function cmdHint() {
   printLine("HINT:", "warn");
   printLine(STAGES[GAME.stageIndex].hint, "dim");
 
-  // UPDATED: dynamic recommendation (copy/paste-ready)
   const recommended = getRecommendedCommand();
 
-  // (keep your existing button-creation code below exactly the same)
+  // --- Recommended command row + copy button ---
   const row = document.createElement("div");
   row.className = "line dim";
   row.textContent = "Recommended command: ";
@@ -1003,6 +1000,102 @@ function cmdHint() {
   row.appendChild(btn);
   terminalEl.appendChild(row);
   scrollToBottom();
+
+  // --- Defensive recommendation (new) ---
+  // We recommend:
+  // - rotate proxy always available (slows trace growth)
+  // - sanitize logs after unlock (reduces trace)
+  // - decoy packets after unlock (reduces trace)
+  // We only show a defense tip if trace is getting high OR they're in later stages.
+  const trace = TRACE.value;
+  const defense = (() => {
+    // If trace is low, keep it simple: optional suggestion only.
+    if (trace < 35 && GAME.stageIndex <= 1) return null;
+
+    // Prefer the strongest unlocked mitigation when trace is high.
+    if (trace >= 70 && GAME.unlocked.sanitize) {
+      return {
+        cmd: "sanitize logs",
+        why: "Your trace is high. In real investigations, logs + timestamps can correlate activity. In this fictional sim, sanitizing reduces trace pressure."
+      };
+    }
+    if (trace >= 70 && GAME.unlocked.decoy) {
+      return {
+        cmd: "decoy packets",
+        why: "Your trace is high. Extra traffic patterns can change correlation signals. In this fictional sim, decoys reduce trace pressure."
+      };
+    }
+
+    // Mid-level trace: rotate proxy is a gentle, always-available option.
+    if (trace >= 40) {
+      return {
+        cmd: "rotate proxy",
+        why: "Trace builds from repeated actions (like scans). Rotating proxy (fictional) slows trace growth for a bit, giving you more room to explore calmly."
+      };
+    }
+
+    // If trace isn't high but they've unlocked tools, mention them as training.
+    if (GAME.unlocked.sanitize) {
+      return {
+        cmd: "sanitize logs",
+        why: "Optional: using defensive tools teaches that forensics often relies on artifacts like logs and timestamps. In this sim, sanitizing lowers the trace meter."
+      };
+    }
+    if (GAME.unlocked.decoy) {
+      return {
+        cmd: "decoy packets",
+        why: "Optional: this sim models correlation pressure. Decoys lower your trace meter so you can keep learning."
+      };
+    }
+
+    return null;
+  })();
+
+  if (defense) {
+    // Print explanation
+    printLine("DEFENSIVE TIP:", "warn");
+    printLine(defense.why, "dim");
+
+    // Add a copy button for the defensive command too (optional but makes it easy)
+    const drow = document.createElement("div");
+    drow.className = "line dim";
+    drow.textContent = "Suggested defense: ";
+
+    const dcode = document.createElement("span");
+    dcode.textContent = defense.cmd;
+    dcode.style.fontFamily = "var(--mono)";
+    dcode.style.color = "rgba(32,214,255,0.95)";
+    dcode.style.fontWeight = "800";
+
+    const dbtn = document.createElement("button");
+    dbtn.type = "button";
+    dbtn.textContent = "Copy defense";
+    dbtn.style.marginLeft = "10px";
+    dbtn.style.padding = "6px 10px";
+    dbtn.style.borderRadius = "10px";
+    dbtn.style.border = "1px solid rgba(255,255,255,0.14)";
+    dbtn.style.background = "rgba(255,255,255,0.06)";
+    dbtn.style.color = "rgba(215,255,231,0.95)";
+    dbtn.style.cursor = "pointer";
+    dbtn.style.fontFamily = "var(--sans)";
+    dbtn.style.fontWeight = "800";
+
+    dbtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(defense.cmd);
+        toast("Defense copied.");
+      } catch (e) {
+        toast("Couldn't access clipboard—placed defense in input.");
+      }
+      inputEl.value = defense.cmd;
+      inputEl.focus();
+    });
+
+    drow.appendChild(dcode);
+    drow.appendChild(dbtn);
+    terminalEl.appendChild(drow);
+    scrollToBottom();
+  }
 
   addTrace(1.0 * traceGrowthMultiplier(), "hint");
 }
