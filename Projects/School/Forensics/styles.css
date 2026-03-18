@@ -19,7 +19,13 @@
 }
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; }
+
+/* UPDATED: lock app to viewport; prevent whole-page scrolling */
+html,body{
+  height:100%;
+  overflow:hidden; /* prevents scrolling the page; terminal/side panels scroll instead */
+}
+
 body{
   margin:0;
   background: radial-gradient(1200px 700px at 15% 10%, rgba(32,214,255,0.09), transparent 55%),
@@ -31,7 +37,8 @@ body{
 }
 
 .app{
-  min-height:100%;
+  height:100vh;     /* UPDATED */
+  min-height:100vh; /* UPDATED */
   display:flex;
   flex-direction:column;
 }
@@ -48,6 +55,7 @@ body{
   position:sticky;
   top:0;
   z-index:10;
+  flex: 0 0 auto; /* UPDATED: ensure HUD doesn't shrink weirdly */
 }
 
 .brand{
@@ -155,8 +163,10 @@ body{
   border-color: rgba(68,255,153,0.28);
 }
 
+/* UPDATED: allow children to become scroll containers instead of growing the page */
 .main{
   flex:1;
+  min-height:0; /* IMPORTANT */
   display:grid;
   grid-template-columns: 1.35fr 0.65fr;
   gap:14px;
@@ -174,7 +184,7 @@ body{
   box-shadow: 0 18px 60px rgba(0,0,0,0.55);
   display:flex;
   flex-direction:column;
-  min-height:60vh;
+  min-height:0; /* UPDATED: IMPORTANT so terminal can scroll */
 }
 
 .terminalChrome{
@@ -208,6 +218,7 @@ body{
   color:rgba(215,255,231,0.88);
 }
 
+/* UPDATED: this becomes the primary scroll region */
 .terminal{
   padding:14px 14px 8px;
   font-family:var(--mono);
@@ -216,6 +227,7 @@ body{
   color:var(--ink);
   overflow:auto;
   flex:1;
+  min-height:0; /* UPDATED: IMPORTANT */
   scroll-behavior:smooth;
 }
 
@@ -236,6 +248,7 @@ body{
   padding:10px 12px 12px;
   border-top:1px solid rgba(255,255,255,0.06);
   background: rgba(8,12,11,0.65);
+  flex: 0 0 auto;
 }
 .prompt{
   font-family:var(--mono);
@@ -266,6 +279,7 @@ body{
   padding:0 12px 12px;
   font-size:12px;
   color:rgba(157,219,183,0.80);
+  flex: 0 0 auto;
 }
 kbd{
   font-family:var(--mono);
@@ -278,11 +292,16 @@ kbd{
   color:rgba(215,255,231,0.92);
 }
 
+/* UPDATED: side panel can scroll independently if it overflows */
 .sidePanel{
   display:flex;
   flex-direction:column;
   gap:14px;
+  min-height:0;     /* IMPORTANT */
+  overflow:auto;    /* UPDATED */
+  padding-right:2px; /* tiny space so scrollbar doesn't cover content */
 }
+
 .panelCard{
   background: rgba(12,21,18,0.45);
   border:1px solid rgba(255,255,255,0.06);
@@ -419,11 +438,20 @@ kbd{
 
 /* Mobile layout */
 @media (max-width: 980px){
-  .main{ grid-template-columns: 1fr; }
+  .main{
+    grid-template-columns: 1fr;
+    min-height: 0; /* keep scroll containers working */
+  }
+
   .hud{ position:static; }
   .hudCard{ min-width: 160px; }
   .hudCard--trace{ max-width:none; min-width: 220px; }
   .shortcutGrid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+  /* On mobile, side panel appears below terminal; still scrollable if needed */
+  .sidePanel{
+    max-height: 34vh;
+  }
 }
 
 /* Reduce motion preference */
