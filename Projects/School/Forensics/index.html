@@ -1,0 +1,194 @@
+<!--
+README — CYBER NOIR TRAINING SIM (Single‑Page Web Game)
+=====================================================
+
+How to play
+- Open this file (index.html) in a browser. No install, no build.
+- You are a white-hat trainee in a fictional “forensics lab terminal.”
+- Type commands in the prompt at the bottom and press Enter.
+- Your current OBJECTIVE is always shown in the HUD.
+- Use `hint` any time you feel stuck (no shame—this is training).
+- Keep an eye on the TRACE METER. If it fills up, your “connection gets seized.”
+  You restart from the last checkpoint (you won’t lose everything).
+
+Main goal (player fantasy)
+- Discover the password through a clue trail (OSINT + logs + metadata + simple crypto),
+  then `login <password>` to access the final “Vault” message.
+
+Win / Lose
+- Win: Complete all mini-challenges and successfully `login <password>` at the end.
+- Lose state: TRACE reaches 100%. You get seized, then resume at last checkpoint.
+
+Command list (case-insensitive, forgiving)
+Core:
+- help                Show commands + examples
+- clear               Clear terminal output
+- history             Show what you typed so far
+Exploration:
+- ls [path]           List files (example: ls /)
+- cat <file>          Read a file (example: cat /inbox/welcome.txt)
+- grep <term> <file>  Search inside a file (example: grep shift /logs/auth.log)
+OSINT / Network (fictional, educational):
+- whois <domain>      Get fake domain registration details (example: whois nocturne-labs.test)
+- scan <target>       Run a fictional “safe scan” (example: scan training-gateway)
+- trace <tag>         Trace a fictional route to a hint (example: trace token)
+Crypto (simple puzzles):
+- decode <method> <text>  Decode puzzle text (methods: rot, b64)
+Trace-pressure actions (defensive, fictional):
+- rotate proxy        Slows trace growth briefly
+- sanitize logs       Reduces trace a bit (checkpoint-gated)
+- decoy packets       Reduces trace a bit (checkpoint-gated)
+Convenience:
+- autocomplete: press Tab to complete commands/paths when possible
+- hint                Get a contextual hint for the current objective
+
+Notes / Safety
+- Everything is fictional and designed like a CTF training simulator.
+- No real targets, no exploit code, no real step-by-step wrongdoing.
+
+Enjoy. If you get stuck: type `help` then `hint`.
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cyber Noir Training Sim</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="hud" aria-label="Game HUD">
+      <div class="hud__left">
+        <div class="brand">
+          <div class="brand__title">NOCTURNE LABS</div>
+          <div class="brand__sub">White‑Hat Trainee Console • Fictional Sandbox</div>
+        </div>
+      </div>
+
+      <div class="hud__right">
+        <div class="hudCard">
+          <div class="hudLabel">OBJECTIVE</div>
+          <div id="objectiveText" class="hudValue" aria-live="polite"></div>
+        </div>
+
+        <div class="hudCard">
+          <div class="hudLabel">PROGRESS</div>
+          <div class="hudValue">
+            <span id="progressText"></span>
+          </div>
+        </div>
+
+        <div class="hudCard hudCard--trace" aria-label="Trace meter">
+          <div class="hudLabel">TRACE METER</div>
+          <div class="traceRow">
+            <div class="traceBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="traceFill" class="traceFill"></div>
+            </div>
+            <div id="tracePct" class="tracePct">0%</div>
+          </div>
+          <div class="traceHint">Keep it low: rotate proxy / sanitize logs / decoy packets</div>
+        </div>
+
+        <div class="hudActions">
+          <button id="hintBtn" class="btn" type="button">Hint</button>
+          <button id="soundBtn" class="btn" type="button" aria-pressed="true">Sound: On</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="terminalWrap" aria-label="Terminal">
+        <div class="terminalChrome">
+          <div class="dots" aria-hidden="true">
+            <span class="dot dot--red"></span>
+            <span class="dot dot--yellow"></span>
+            <span class="dot dot--green"></span>
+          </div>
+          <div class="chromeTitle">training@nocturne-labs:~</div>
+          <div class="chromeRight">
+            <span class="pill" id="statusPill">SIM: READY</span>
+          </div>
+        </div>
+
+        <div id="terminal" class="terminal" tabindex="0" role="log" aria-live="polite" aria-label="Terminal output">
+          <!-- output lines injected here -->
+        </div>
+
+        <div class="inputRow" aria-label="Command input">
+          <div class="prompt" aria-hidden="true">
+            <span class="prompt__user">trainee</span>
+            <span class="prompt__at">@</span>
+            <span class="prompt__host">nocturne</span>
+            <span class="prompt__path">:</span>
+            <span class="prompt__cwd" id="cwdLabel">/</span>
+            <span class="prompt__sig">$</span>
+          </div>
+
+          <input
+            id="cmdInput"
+            class="cmdInput"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            aria-label="Type a command and press Enter"
+          />
+        </div>
+
+        <div class="footerHelp">
+          Tip: type <kbd>help</kbd>. Use <kbd>Tab</kbd> to autocomplete. Use <kbd>↑</kbd>/<kbd>↓</kbd> for history.
+        </div>
+      </section>
+
+      <aside class="sidePanel" aria-label="Training Panel">
+        <div class="panelCard">
+          <div class="panelTitle">TRAINING NOTES</div>
+          <ul class="panelList">
+            <li><strong>OSINT:</strong> Use public-ish clues like a fake <code>whois</code> record.</li>
+            <li><strong>Logs:</strong> Read <code>/logs/</code> and search with <code>grep</code>.</li>
+            <li><strong>Metadata:</strong> Some “files” contain hidden headers.</li>
+            <li><strong>Crypto:</strong> Simple practice decodes (ROT, Base64).</li>
+            <li><strong>Trace:</strong> A pressure mechanic; use defensive actions.</li>
+          </ul>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">SHORTCUTS</div>
+          <div class="shortcutGrid">
+            <button class="chip" data-run="help" type="button">help</button>
+            <button class="chip" data-run="ls /" type="button">ls /</button>
+            <button class="chip" data-run="ls /logs" type="button">ls /logs</button>
+            <button class="chip" data-run="cat /inbox/welcome.txt" type="button">welcome</button>
+            <button class="chip" data-run="whois nocturne-labs.test" type="button">whois</button>
+            <button class="chip" data-run="hint" type="button">hint</button>
+          </div>
+          <div class="tiny">These just type commands for you (you can still learn by reading the output).</div>
+        </div>
+      </aside>
+    </main>
+
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
+
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Seized overlay">
+      <div class="overlayCard">
+        <div class="overlayTitle">CONNECTION SEIZED</div>
+        <div class="overlayBody">
+          Investigators correlated your session by timestamps and routing patterns.<br/>
+          <span class="muted">(Fictional training event.)</span>
+          <hr/>
+          You’ll restart from your last checkpoint.
+        </div>
+        <button id="resumeBtn" class="btn btn--primary" type="button">Resume</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
