@@ -1,0 +1,278 @@
+<!--
+LAUNCHER PAGE (Fictional OS Boot)
+================================
+Goal:
+- Swipe/drag up (or press Enter) to “open” a fictional laptop.
+- Type a password to unlock a Windows-like desktop.
+- Click the HackSim icon to launch the terminal game (index.html).
+
+Controls:
+- Swipe/drag up on the lock screen (mobile) OR scroll wheel up OR press Enter.
+- Type password: trainee
+- Click: HackSim icon
+
+Safety:
+- This is a fictional UI inspired by common desktop metaphors.
+- No real brands/logos. No Microsoft assets.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Main Laptop — Launcher</title>
+  <link rel="stylesheet" href="launcher.css" />
+</head>
+<body>
+  <div id="boot" class="boot">
+    <div class="boot__lid" aria-hidden="true">
+      <div class="boot__camera"></div>
+      <div class="boot__logo">COX</div>
+    </div>
+    <div class="boot__base" aria-hidden="true"></div>
+
+    <!-- LOCK SCREEN -->
+    <section id="lock" class="lock" aria-label="Lock screen">
+      <div class="lock__bg"></div>
+
+      <div class="lock__top">
+        <div class="lock__time" id="timeText">12:00</div>
+        <div class="lock__date" id="dateText">Wednesday • 2026-03-18</div>
+      </div>
+
+      <div class="lock__hint">
+        <div class="pill">Swipe up to unlock</div>
+        <div class="sub">Or press Enter • (fictional training device)</div>
+      </div>
+
+      <!-- draggable sheet -->
+      <div id="sheet" class="sheet" aria-hidden="true">
+        <div class="sheet__handle"></div>
+      </div>
+    </section>
+
+    <!-- LOGIN SCREEN -->
+    <section id="login" class="login hidden" aria-label="Login screen">
+      <div class="login__card">
+        <div class="avatar" aria-hidden="true"></div>
+        <div class="login__user">Trainee</div>
+        <div class="login__sub">Cox's Training Device</div>
+
+        <label class="field">
+          <span class="field__label">Password</span>
+          <input id="pw" class="field__input" type="password" autocomplete="off" spellcheck="false" />
+        </label>
+
+        <div class="row">
+          <button id="unlockBtn" class="btn btn--primary" type="button">Unlock</button>
+          <button id="hintBtn" class="btn" type="button">Hint</button>
+        </div>
+
+        <div id="loginMsg" class="msg" aria-live="polite"></div>
+
+        <div class="tiny">
+          Find the simple password. Don't get caught by the forensic scientists.
+        </div>
+      </div>
+    </section>
+
+    <!-- DESKTOP -->
+    <section id="desktop" class="desktop hidden" aria-label="Desktop">
+      <div class="desktop__wall"></div>
+
+      <div class="icons" role="navigation" aria-label="Desktop icons">
+        <button id="hackIcon" class="icon" type="button" aria-label="Open HackSim">
+          <div class="icon__img icon__img--hack" aria-hidden="true"></div>
+          <div class="icon__label">HackSim</div>
+        </button>
+
+        <button id="notesIcon" class="icon" type="button" aria-label="Open Notes">
+          <div class="icon__img icon__img--notes" aria-hidden="true"></div>
+          <div class="icon__label">Notes</div>
+        </button>
+      </div>
+
+      <div id="windowNotes" class="window hidden" role="dialog" aria-modal="false" aria-label="Notes window">
+        <div class="window__bar">
+          <div class="window__title">Notes</div>
+          <button id="closeNotes" class="winBtn" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="window__body">
+          <h3>Welcome, trainee.</h3>
+          <p>This device is a <strong> hacking simulator</strong>.</p>
+          <ul>
+            <li>Click <strong>HackSim</strong> to open the terminal game.</li>
+          </ul>
+          <p class="muted">Password hint: it’s what you are. (lowercase)</p>
+        </div>
+      </div>
+
+      <footer class="taskbar" aria-label="Taskbar">
+        <div class="taskbar__left">
+          <div class="orb" aria-hidden="true"></div>
+          <div class="taskbar__app">CoxOS</div>
+        </div>
+        <div class="taskbar__right">
+          <div id="deskClock" class="clock">12:00</div>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <!-- Replace ONLY the <script> in your launcher.html with this updated one -->
+<script>
+  (function(){
+    const lock = document.getElementById("lock");
+    const login = document.getElementById("login");
+    const desktop = document.getElementById("desktop");
+    const sheet = document.getElementById("sheet");
+
+    const pw = document.getElementById("pw");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const loginMsg = document.getElementById("loginMsg");
+
+    const hackIcon = document.getElementById("hackIcon");
+    const notesIcon = document.getElementById("notesIcon");
+    const windowNotes = document.getElementById("windowNotes");
+    const closeNotes = document.getElementById("closeNotes");
+
+    const timeText = document.getElementById("timeText");
+    const dateText = document.getElementById("dateText");
+    const deskClock = document.getElementById("deskClock");
+
+    const TRAINING_PASSWORD = "student";
+
+    // ---- US-friendly clock/date (uses the player's local time zone) ----
+    // Time: 12-hour with AM/PM (like many US Windows setups)
+    // Date: Weekday, Month Day, Year (e.g., Wednesday, March 18, 2026)
+    function formatTimeUS(d){
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).format(d);
+    }
+
+    function formatDateUS(d){
+      return new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(d);
+    }
+
+    function tick(){
+      const d = new Date(); // local device time (US users will see US local time)
+      const t = formatTimeUS(d);
+      timeText.textContent = t;
+      deskClock.textContent = t;
+      dateText.textContent = formatDateUS(d);
+    }
+
+    // Update immediately + keep it accurate (every second feels “OS-like”)
+    tick();
+    setInterval(tick, 1000);
+
+    function toLogin(){
+      lock.classList.add("hidden");
+      login.classList.remove("hidden");
+      setTimeout(()=> pw.focus(), 80);
+    }
+
+    function toDesktop(){
+      login.classList.add("hidden");
+      desktop.classList.remove("hidden");
+    }
+
+    // Swipe/drag up detection
+    let startY = null;
+    let dragged = 0;
+
+    function onStart(y){
+      startY = y;
+      dragged = 0;
+      sheet.classList.add("sheet--active");
+    }
+    function onMove(y){
+      if (startY == null) return;
+      dragged = Math.max(0, startY - y);
+      const pct = Math.min(1, dragged / 180);
+      sheet.style.transform = `translateY(${-pct * 220}px)`;
+      sheet.style.opacity = String(1 - pct * 0.15);
+      if (pct > 0.85){
+        startY = null;
+        sheet.classList.remove("sheet--active");
+        sheet.style.transform = "";
+        sheet.style.opacity = "";
+        toLogin();
+      }
+    }
+    function onEnd(){
+      startY = null;
+      sheet.classList.remove("sheet--active");
+      sheet.style.transform = "";
+      sheet.style.opacity = "";
+    }
+
+    lock.addEventListener("touchstart", (e)=> onStart(e.touches[0].clientY), {passive:true});
+    lock.addEventListener("touchmove", (e)=> onMove(e.touches[0].clientY), {passive:true});
+    lock.addEventListener("touchend", onEnd);
+
+    lock.addEventListener("mousedown", (e)=> onStart(e.clientY));
+    window.addEventListener("mousemove", (e)=> onMove(e.clientY));
+    window.addEventListener("mouseup", onEnd);
+
+    // Scroll wheel up
+    lock.addEventListener("wheel", (e)=>{
+      if (e.deltaY < 0) toLogin();
+    }, {passive:true});
+
+    // Keyboard
+    window.addEventListener("keydown", (e)=>{
+      if (!lock.classList.contains("hidden") && e.key === "Enter") toLogin();
+      if (!login.classList.contains("hidden") && e.key === "Enter") doUnlock();
+      if (!desktop.classList.contains("hidden") && e.key === "Escape") {
+        windowNotes.classList.add("hidden");
+      }
+    });
+
+    function doUnlock(){
+      const v = (pw.value || "").trim().toLowerCase();
+      if (!v){
+        loginMsg.textContent = "Type the training password.";
+        loginMsg.className = "msg msg--warn";
+        return;
+      }
+      if (v !== TRAINING_PASSWORD){
+        loginMsg.textContent = "Incorrect password. Hint: it's what you are.";
+        loginMsg.className = "msg msg--bad";
+        pw.select();
+        return;
+      }
+      loginMsg.textContent = "Unlocked.";
+      loginMsg.className = "msg msg--ok";
+      setTimeout(toDesktop, 350);
+    }
+
+    unlockBtn.addEventListener("click", doUnlock);
+    hintBtn.addEventListener("click", ()=>{
+      loginMsg.textContent = "Hint: the password is 'student' (lowercase).";
+      loginMsg.className = "msg msg--warn";
+      pw.focus();
+    });
+
+    notesIcon.addEventListener("click", ()=>{
+      windowNotes.classList.toggle("hidden");
+    });
+    closeNotes.addEventListener("click", ()=> windowNotes.classList.add("hidden"));
+
+    hackIcon.addEventListener("click", ()=>{
+      // Launch your existing game page
+      window.location.href = "index.html";
+    });
+  })();
+</script>
+</body>
+</html>
