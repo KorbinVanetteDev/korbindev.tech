@@ -101,6 +101,9 @@
             <li><strong>Metadata:</strong> Some “files” contain hidden headers.</li>
             <li><strong>Crypto:</strong> Simple practice decodes (ROT, Base64).</li>
             <li><strong>Trace:</strong> A pressure mechanic; use defensive actions.</li>
+            <li><strong>Read:</strong>To read a file, type <code>cat</code> then type the file name given in <code>hint</code></li>
+            <li><strong>Grep:</strong>To use <code>grep</code>, type <code>grep</code> + <code>(Case tag assigned)</code> (Check Terminal) + <code>File</code> (Given in hint)</li>
+            <li><strong>Decode:</strong>To decode, type <code>decode</code>, the <code>type</code> (Which is either b64, or rot. Check Terminal), then the <code>text</code> (Check terminal to the right of ROT, or B64</li>
           </ul>
         </div>
 
@@ -113,6 +116,9 @@
             <button class="chip" data-run="cat /inbox/welcome.txt" type="button">welcome</button>
             <button class="chip" data-run="whois nocturne-labs.test" type="button">whois</button>
             <button class="chip" data-run="hint" type="button">hint</button>
+            <button class="chip" data-run="cat" type="button">Read</button>
+            <button class="chip" data-run="grep" type="button">Grep</button>
+            <button class="chip" data-run="decode" type="button">Decode</button>
           </div>
           <div class="tiny">These just type commands for you.</div>
         </div>
