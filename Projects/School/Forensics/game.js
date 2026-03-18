@@ -917,7 +917,7 @@ function getRecommendedCommand() {
 
   // Stage 2: OSINT -> decode digits
   if (GAME.stageIndex === 2) {
-    if (!GAME.did.sawWhois) return "whois nocturne-labs.test";
+    if (!GAME.did.sawWhois) return "whois cox-labs.test";
     if (!GAME.discovered.digits) return `decode b64 ${CLUES.b64Digits}`;
     return "cat /lab/evidence.png"; // next step
   }
