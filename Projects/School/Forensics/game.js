@@ -215,7 +215,7 @@ So you're looking for three pieces, not one guess.`
       type: "file",
       content:
 `OSINT TRAINING TARGETS
-- nocturne-labs.test  (dummy training domain)
+- cox-labs.test  (dummy training domain)
 - training-gateway    (simulated network node)
 - vault-door          (simulated service)
 Note: This is a sandbox. Do not use these commands on real systems.`
@@ -273,7 +273,7 @@ Hint: Some files start with human-readable header lines.`
       type: "file",
       content:
 `PNG
-X-NOCTURNE-SIM: TRUE
+X-COX-SIM: TRUE
 X-META-AUTHOR: "M. Vale"
 X-META-LABEL: "${CLUES.metaWord2}"
 X-META-NOTE: "Second word lives in plain sight."
@@ -305,11 +305,11 @@ Reminder: password format is <first-word>-<3 digits>-<second-word>`
 
   // Fake WHOIS database (domain -> record) includes base64 digits
   const WHOIS = {
-    "nocturne-labs.test": {
-      domain: "nocturne-labs.test",
+    "cox-labs.test": {
+      domain: "cox-labs.test",
       registrar: "Korbindev Domains Inc.",
       created: "2025-10-13",
-      contact: "ops@nocturne-labs.test",
+      contact: "ops@cox-labs.test",
       note:
 `Training record:
 CaseTag: ${SESSION.seedTag}
@@ -415,7 +415,7 @@ Hint: decode b64 to get the 3 digits.`
       title: "OSINT (Safe WHOIS)",
       objective: "Use whois to find the base64 digits clue for the password.",
       hint:
-"Try: whois nocturne-labs.test  then decode b64 <the_text> to reveal the 3 digits.",
+"Try: whois cox-labs.test  then decode b64 <the_text> to reveal the 3 digits.",
       onEnter() {}
     },
     {
@@ -700,7 +700,7 @@ Hint: decode b64 to get the 3 digits.`
       "  ls /logs",
       "  cat /logs/training.log",
       "  grep CASE /logs/auth.log",
-      "  whois nocturne-labs.test",
+      "  whois cox-labs.test",
       "  decode rot " + CLUES.rotWord1,
       "  decode b64 " + CLUES.b64Digits
     ];
@@ -780,7 +780,7 @@ Hint: decode b64 to get the 3 digits.`
     const rec = WHOIS[key];
     if (!rec) {
       printLine(`whois: no record for '${domain}' in this training database`, "warn");
-      printLine("Tip: Try whois nocturne-labs.test", "dim");
+      printLine("Tip: Try whois cox-labs.test", "dim");
       return;
     }
     GAME.did.sawWhois = true;
@@ -845,7 +845,7 @@ Hint: decode b64 to get the 3 digits.`
       `TRACE starting for tag: ${t}`,
       "hop 1  trainee-console     10.1.0.12      (simulated)",
       "hop 2  training-gateway    10.1.0.1       (simulated)",
-      "hop 3  nocturne-core       10.9.4.20      (simulated)",
+      "hop 3  cox-core       10.9.4.20      (simulated)",
       "hop 4  vault-door          10.9.4.99      (simulated)",
       "note: In real forensics, analysts correlate timestamps, routes, and identifiers.",
     ];
