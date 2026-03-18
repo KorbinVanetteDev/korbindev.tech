@@ -82,6 +82,18 @@ UPDATED LAUNCHER
   </section>
 
   <script>
+
+      (function(){
+    function setVh(){
+      // accurate viewport height for mobile browser UI (address bar)
+      document.documentElement.style.setProperty("--vh", (window.innerHeight * 0.01) + "px");
+    }
+    setVh();
+    window.addEventListener("resize", setVh);
+
+    // ... keep the rest of your launcher script below ...
+  })();
+    
     (function(){
       const lock = document.getElementById("lock");
       const unlock = document.getElementById("unlock");
