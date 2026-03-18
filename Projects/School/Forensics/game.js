@@ -898,11 +898,71 @@ Hint: decode b64 to get the 3 digits.`
     GAME.history.slice(-30).forEach((h, i) => printLine(`${String(Math.max(1, GAME.history.length - 30) + i).padStart(3, " ")}  ${h}`, "dim"));
   }
 
-  function cmdHint() {
-    printLine("HINT:", "warn");
-    printLine(STAGES[GAME.stageIndex].hint, "dim");
-    addTrace(1.0 * traceGrowthMultiplier(), "hint"); // small pressure: reading help takes time
-  }
+  // REPLACE your existing cmdHint() with this version (only change)
+
+function cmdHint() {
+  printLine("HINT:", "warn");
+  printLine(STAGES[GAME.stageIndex].hint, "dim");
+
+  // --- Copy-command button (new) ---
+  // We keep this simple + beginner friendly:
+  // - Each stage has a "recommended command" that helps them progress.
+  // - Button copies it to clipboard and also puts it into the input box.
+  const recommended = (() => {
+    switch (GAME.stageIndex) {
+      case 0: return "cat /inbox/welcome.txt";
+      case 1: return "cat /logs/training.log";
+      case 2: return "whois nocturne-labs.test";
+      case 3: return "cat /lab/evidence.png";
+      case 4: return "login <password>";
+      default: return "help";
+    }
+  })();
+
+  // Create an interactive line (button)
+  const row = document.createElement("div");
+  row.className = "line dim";
+  row.textContent = "Recommended command: ";
+
+  const code = document.createElement("span");
+  code.textContent = recommended;
+  code.style.fontFamily = "var(--mono)";
+  code.style.color = "rgba(68,255,153,0.95)";
+  code.style.fontWeight = "800";
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.textContent = "Copy command";
+  btn.style.marginLeft = "10px";
+  btn.style.padding = "6px 10px";
+  btn.style.borderRadius = "10px";
+  btn.style.border = "1px solid rgba(255,255,255,0.14)";
+  btn.style.background = "rgba(255,255,255,0.06)";
+  btn.style.color = "rgba(215,255,231,0.95)";
+  btn.style.cursor = "pointer";
+  btn.style.fontFamily = "var(--sans)";
+  btn.style.fontWeight = "800";
+
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(recommended);
+      toast("Copied. Paste or press Enter.");
+    } catch (e) {
+      toast("Couldn't access clipboard—placed command in input.");
+    }
+    // Always put it in the input as a fallback (super easy UX)
+    inputEl.value = recommended;
+    inputEl.focus();
+  });
+
+  row.appendChild(code);
+  row.appendChild(btn);
+  terminalEl.appendChild(row);
+  scrollToBottom();
+  // --- end new UI ---
+
+  addTrace(1.0 * traceGrowthMultiplier(), "hint"); // small pressure: reading help takes time
+}
 
   function cmdLogin(pw) {
     if (!pw) return printLine("login: usage: login <password>", "danger");
