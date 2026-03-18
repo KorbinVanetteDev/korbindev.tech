@@ -322,7 +322,7 @@ Hint: decode b64 to get the 3 digits.`
   // -----------------------------
   const TRACE = {
     value: 8,
-    growthPerCommand: 7,
+    growthPerCommand: 12,
     slowUntil: 0, // timestamp ms
     checkpoint: 0, // stage index checkpoint
   };
