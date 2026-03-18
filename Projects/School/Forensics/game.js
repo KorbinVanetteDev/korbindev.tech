@@ -84,7 +84,7 @@
   }
 
   // -----------------------------
-  // Game content (fictional)
+  // Game content
   // -----------------------------
   // Mini-challenges (4) + final login:
   // 1) Read welcome message, learn about logs and "token"
@@ -182,7 +182,7 @@
       type: "file",
       content:
 `WELCOME, TRAINEE.
-Scenario: "Operation Glass Lantern" (fictional).
+Scenario: "Operation Glass Lantern".
 Your task: Access the training vault by discovering the password through evidence.
 
 Training rule: no real hacking here — only reading clues.
@@ -214,7 +214,7 @@ So you're looking for three pieces, not one guess.`
     "/osint/targets.txt": {
       type: "file",
       content:
-`OSINT TRAINING TARGETS (fictional)
+`OSINT TRAINING TARGETS
 - nocturne-labs.test  (dummy training domain)
 - training-gateway    (simulated network node)
 - vault-door          (simulated service)
@@ -237,7 +237,7 @@ Note: This is a sandbox. Do not use these commands on real systems.`
 [${nowISO()}] NET: Packet banner: "forensics-first"
 [${nowISO()}] NET: Tag observed: ${SESSION.seedTag}
 [${nowISO()}] NET: Correlation hint: timestamps + tags + routes.
-[${nowISO()}] NET: Trace algorithm watches for repeated scans. (fictional)`
+[${nowISO()}] NET: Trace algorithm watches for repeated scans.`
     },
 
     "/logs/training.log": {
@@ -259,7 +259,7 @@ Note: This is a sandbox. Do not use these commands on real systems.`
     "/lab/readme_lab.txt": {
       type: "file",
       content:
-`LAB: Evidence Handling (fictional)
+`LAB: Evidence Handling
 You may inspect metadata and headers here.
 
 Try:
@@ -284,7 +284,7 @@ X-META-NOTE: "Second word lives in plain sight."
     "/lab/metadata.txt": {
       type: "file",
       content:
-`Metadata checklist (fictional):
+`Metadata checklist:
 - creator
 - timestamp
 - label
@@ -307,7 +307,7 @@ Reminder: password format is <first-word>-<3 digits>-<second-word>`
   const WHOIS = {
     "nocturne-labs.test": {
       domain: "nocturne-labs.test",
-      registrar: "Fictional Domains Inc.",
+      registrar: "Korbindev Domains Inc.",
       created: "2025-10-13",
       contact: "ops@nocturne-labs.test",
       note:
@@ -486,7 +486,7 @@ Hint: decode b64 to get the 3 digits.`
       if (GAME.discovered.caseTagSeen && GAME.discovered.firstWord) {
         // unlock one defensive tool as reward
         GAME.unlocked.sanitize = true;
-        printLine("UNLOCKED: sanitize logs  (reduces trace a bit — fictional defense)", "accent");
+        printLine("UNLOCKED: sanitize logs  (reduces trace a bit — defense)", "accent");
         AudioFX.success();
         setStage(2, { checkpoint: true });
         return;
@@ -496,7 +496,7 @@ Hint: decode b64 to get the 3 digits.`
     if (GAME.stageIndex === 2 && GAME.discovered.digits) {
       // unlock decoy packets
       GAME.unlocked.decoy = true;
-      printLine("UNLOCKED: decoy packets  (reduces trace a bit — fictional defense)", "accent");
+      printLine("UNLOCKED: decoy packets  (reduces trace a bit — defense)", "accent");
       AudioFX.success();
       setStage(3, { checkpoint: true });
       return;
@@ -679,7 +679,7 @@ Hint: decode b64 to get the 3 digits.`
   // -----------------------------
   function showHelp() {
     const lines = [
-      "Available commands (fictional training):",
+      "Available commands (training):",
       "  help",
       "  clear",
       "  ls [path]",
@@ -842,7 +842,7 @@ Hint: decode b64 to get the 3 digits.`
     // Educational flavor: show a fake route and mention correlation.
     const t = tag.trim();
     const lines = [
-      `TRACE (fictional) starting for tag: ${t}`,
+      `TRACE starting for tag: ${t}`,
       "hop 1  trainee-console     10.1.0.12      (simulated)",
       "hop 2  training-gateway    10.1.0.1       (simulated)",
       "hop 3  nocturne-core       10.9.4.20      (simulated)",
@@ -859,7 +859,7 @@ Hint: decode b64 to get the 3 digits.`
     // Increases trace more than other actions (spamming scan is noisy)
     const t = target.toLowerCase();
     const lines = [
-      `SCAN (fictional): ${target}`,
+      `SCAN: ${target}`,
       "Mode: training-safe enumeration (simulated)",
       "Result: open ports are redacted in training.",
       "Hint: scanning isn't always needed — try reading evidence and OSINT first.",
@@ -875,7 +875,7 @@ Hint: decode b64 to get the 3 digits.`
   function cmdRotateProxy() {
     // Slows trace growth for 30 seconds, small immediate reduction
     TRACE.slowUntil = Date.now() + 30000;
-    reduceTrace(6, "Proxy rotated (fictional). Trace growth slowed briefly.");
+    reduceTrace(6, "Proxy rotated. Trace growth slowed briefly.");
   }
 
   function cmdSanitizeLogs() {
@@ -883,7 +883,7 @@ Hint: decode b64 to get the 3 digits.`
       printLine("sanitize logs: locked. Complete the Log Reading challenge first.", "warn");
       return;
     }
-    reduceTrace(12, "Logs sanitized (fictional training action). Trace reduced.");
+    reduceTrace(12, "Logs sanitized (training action). Trace reduced.");
   }
 
   function cmdDecoyPackets() {
@@ -891,7 +891,7 @@ Hint: decode b64 to get the 3 digits.`
       printLine("decoy packets: locked. Complete the OSINT challenge first.", "warn");
       return;
     }
-    reduceTrace(10, "Decoy packets deployed (fictional). Trace reduced.");
+    reduceTrace(10, "Decoy packets deployed. Trace reduced.");
   }
 
   function cmdHistory() {
@@ -1084,9 +1084,9 @@ Hint: decode b64 to get the 3 digits.`
 
     printHr();
     typeLines([
-      "NOCTURNE LABS — TRAINING SIMULATOR",
-      "Mode: Cyber Noir Forensics Terminal",
-      "Safety: fictional targets only • beginner-friendly",
+      "Hack Away",
+      "Mode: Cyber Terminal",
+      "Safety: fake targets only • beginner-friendly",
       "",
       "Your mission: discover the vault password through evidence.",
       "Type 'help' to see commands. Type 'hint' if you get stuck."
