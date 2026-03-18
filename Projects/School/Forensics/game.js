@@ -912,7 +912,7 @@ function getRecommendedCommand() {
     if (!GAME.discovered.caseTagSeen) return "grep CASE /logs/auth.log";
     if (!GAME.did.readTrainingLog) return "cat /logs/training.log";
     if (!GAME.discovered.firstWord) return `decode rot ${CLUES.rotWord1}`;
-    return "whois nocturne-labs.test"; // ready to move on
+    return "whois cox-labs.test"; // ready to move on
   }
 
   // Stage 2: OSINT -> decode digits
