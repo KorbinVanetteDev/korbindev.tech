@@ -182,10 +182,9 @@
       type: "file",
       content:
 `WELCOME, TRAINEE.
-Scenario: "Operation Glass Lantern".
-Your task: Access the training vault by discovering the password through evidence.
+Scenario: "Operation Grade Vault".
+Your task: Access the vault by getting the password through evidence.
 
-Training rule: no real hacking here — only reading clues.
 
 Start here:
 1) Check the logs for unusual tags.
@@ -216,15 +215,15 @@ So you're looking for three pieces, not one guess.`
       content:
 `OSINT TRAINING TARGETS
 - cox-labs.test  (dummy training domain)
-- training-gateway    (simulated network node)
+- training-gateway    (network node)
 - vault-door          (simulated service)
-Note: This is a sandbox. Do not use these commands on real systems.`
+Note: Do not use these commands on real computers.`
     },
 
     "/logs/auth.log": {
       type: "file",
       content:
-`[${nowISO()}] AUTH: Booted trainee console (sim).
+`[${nowISO()}] AUTH: Booted trainee console.
 [${nowISO()}] AUTH: Login attempts are rate-limited in the sim.
 [${nowISO()}] AUTH: Instructor note: "A password is a story — follow the story."
 [${nowISO()}] AUTH: Case tag assigned => ${SESSION.seedTag}`
@@ -918,9 +917,9 @@ Hint: decode b64 to get the 3 digits.`
     if (attempt === real) {
       AudioFX.success();
       printHr();
-      printLine("ACCESS GRANTED ✅", "accent");
+      printLine("ACCESS GRANTED", "accent");
       printLine("Vault message:", "blue");
-      printLine("“You didn’t ‘hack’ a system — you read the story in the data.”", "dim");
+      printLine("Congratulations! You got into the Powerschool Vault. All of your grades have been changed to an A", "dim");
       printLine("Skills practiced: OSINT (whois), log reading (grep), metadata inspection, toy decoding.", "dim");
       printLine("Training complete. You may continue exploring with ls/cat/grep for fun.", "dim");
       printHr();
