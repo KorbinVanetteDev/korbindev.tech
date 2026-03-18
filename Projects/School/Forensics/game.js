@@ -899,27 +899,72 @@ Hint: decode b64 to get the 3 digits.`
   }
 
   // REPLACE your existing cmdHint() with this version (only change)
+// CHANGE 1: Add this helper function anywhere ABOVE cmdHint() (for example near maybeAdvance()).
+// It picks the next best command based on what the player has already done / discovered.
+
+function getRecommendedCommand() {
+  // If they haven’t read the welcome yet, always send them there.
+  if (!GAME.did.readWelcome) return "cat /inbox/welcome.txt";
+
+  // Stage 1: guide them through logs + decoding in the right order.
+  if (GAME.stageIndex === 1) {
+    if (!GAME.did.readAuthLog) return "cat /logs/auth.log";
+    if (!GAME.discovered.caseTagSeen) return "grep CASE /logs/auth.log";
+    if (!GAME.did.readTrainingLog) return "cat /logs/training.log";
+    if (!GAME.discovered.firstWord) return `decode rot ${CLUES.rotWord1}`;
+    return "whois nocturne-labs.test"; // ready to move on
+  }
+
+  // Stage 2: OSINT -> decode digits
+  if (GAME.stageIndex === 2) {
+    if (!GAME.did.sawWhois) return "whois nocturne-labs.test";
+    if (!GAME.discovered.digits) return `decode b64 ${CLUES.b64Digits}`;
+    return "cat /lab/evidence.png"; // next step
+  }
+
+  // Stage 3: metadata
+  if (GAME.stageIndex === 3) {
+    if (!GAME.did.readEvidence) return "cat /lab/evidence.png";
+    if (!GAME.discovered.secondWord) return "cat /lab/evidence.png";
+    return "login <password>";
+  }
+
+  // Stage 4: assemble final
+  if (GAME.stageIndex === 4) {
+    // If they already have all pieces, recommend the exact login command (copy/paste ready).
+    if (GAME.discovered.firstWord && GAME.discovered.digits && GAME.discovered.secondWord) {
+      const pw = `${GAME.discovered.firstWord}-${GAME.discovered.digits}-${GAME.discovered.secondWord}`;
+      return `login ${pw}`;
+    }
+
+    // Otherwise point to whatever is missing.
+    if (!GAME.discovered.firstWord) return `decode rot ${CLUES.rotWord1}`;
+    if (!GAME.discovered.digits) return `decode b64 ${CLUES.b64Digits}`;
+    if (!GAME.discovered.secondWord) return "cat /lab/evidence.png";
+    return "help";
+  }
+
+  // Stage 0 or anything else: keep it simple
+  if (GAME.stageIndex === 0) return "cat /inbox/welcome.txt";
+
+  // Fallback
+  return "help";
+}
+  
+// CHANGE 2: In cmdHint(), replace your current "recommended" switch with this single line:
+//
+//   const recommended = getRecommendedCommand();
+//
+// Nothing else has to change in cmdHint().
 
 function cmdHint() {
   printLine("HINT:", "warn");
   printLine(STAGES[GAME.stageIndex].hint, "dim");
 
-  // --- Copy-command button (new) ---
-  // We keep this simple + beginner friendly:
-  // - Each stage has a "recommended command" that helps them progress.
-  // - Button copies it to clipboard and also puts it into the input box.
-  const recommended = (() => {
-    switch (GAME.stageIndex) {
-      case 0: return "cat /inbox/welcome.txt";
-      case 1: return "cat /logs/training.log";
-      case 2: return "whois nocturne-labs.test";
-      case 3: return "cat /lab/evidence.png";
-      case 4: return "login <password>";
-      default: return "help";
-    }
-  })();
+  // UPDATED: dynamic recommendation (copy/paste-ready)
+  const recommended = getRecommendedCommand();
 
-  // Create an interactive line (button)
+  // (keep your existing button-creation code below exactly the same)
   const row = document.createElement("div");
   row.className = "line dim";
   row.textContent = "Recommended command: ";
@@ -950,7 +995,6 @@ function cmdHint() {
     } catch (e) {
       toast("Couldn't access clipboard—placed command in input.");
     }
-    // Always put it in the input as a fallback (super easy UX)
     inputEl.value = recommended;
     inputEl.focus();
   });
@@ -959,9 +1003,8 @@ function cmdHint() {
   row.appendChild(btn);
   terminalEl.appendChild(row);
   scrollToBottom();
-  // --- end new UI ---
 
-  addTrace(1.0 * traceGrowthMultiplier(), "hint"); // small pressure: reading help takes time
+  addTrace(1.0 * traceGrowthMultiplier(), "hint");
 }
 
   function cmdLogin(pw) {
